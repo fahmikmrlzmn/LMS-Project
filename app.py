@@ -5,12 +5,13 @@ from dotenv import load_dotenv
 import os
 from datetime import datetime
 from groq import Groq
+from flask import send_from_directory
 
 # Load environment variables
 load_dotenv()
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = '/tmp/uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
@@ -89,6 +90,45 @@ def dashboard():
     conn.close()
     return render_template("dashboard.html", fullname=fullname, courses=courses, course_progress=course_progress)
 
+@app.route("/progress_data")
+def progress_data():
+    if "user_id" not in session:
+        return {"error": "Not logged in"}
+
+    conn = sqlite3.connect("lms_database.db")
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT courses.id, courses.name
+        FROM courses
+        JOIN enrollments ON courses.id = enrollments.course_id
+        WHERE enrollments.user_id=?
+    """, (session["user_id"],))
+
+    courses = c.fetchall()
+
+    progress_data = []
+
+    for course in courses:
+        course_id = course[0]
+        course_name = course[1]
+
+        c.execute("SELECT COUNT(*) FROM assignments WHERE course_id=?", (course_id,))
+        total = c.fetchone()[0]
+
+        c.execute("SELECT COUNT(*) FROM submissions WHERE user_id=? AND course_id=?",
+                  (session["user_id"], course_id))
+        done = c.fetchone()[0]
+
+        percent = int((done / total) * 100) if total else 0
+
+        progress_data.append({
+            "course": course_name,
+            "progress": percent
+        })
+
+    conn.close()
+    return {"progress": progress_data}
 
 @app.route('/courses')
 def courses():
@@ -220,6 +260,12 @@ def assignment():
                            submissions=submissions,
                            chat_history=session.get("assignment_chat", []))
 
+@app.route("/download/<filename>")
+def download_file(filename):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename, as_attachment=True)
 
 @app.route("/ai", methods=["GET", "POST"])
 def ai():
@@ -322,6 +368,82 @@ def add_course():
 
     return redirect(url_for("courses"))
 
+@app.route("/generate_quiz", methods=["POST"])
+def generate_quiz():
+    if "user_id" not in session:
+        return {"error": "Not logged in"}
+
+    topic = request.form.get("topic")
+
+    try:
+        response = groq_client.chat.completions.create(
+            model="openai/gpt-oss-20b",
+            messages=[
+                {"role": "system", "content": "You are a quiz generator for students."},
+                {"role": "user", "content": f"Generate 5 quiz questions about {topic} with answers."}
+            ],
+            max_tokens=400
+        )
+
+        quiz = response.choices[0].message.content
+
+    except Exception as e:
+        quiz = f"Error: {str(e)}"
+
+    return {"quiz": quiz}
+
+@app.route("/leaderboard")
+def leaderboard():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    conn = sqlite3.connect("lms_database.db")
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT users.fullname, COUNT(submissions.id) as total
+        FROM users
+        LEFT JOIN submissions ON users.id = submissions.user_id
+        GROUP BY users.id
+        ORDER BY total DESC
+        LIMIT 10
+    """)
+
+    leaders = c.fetchall()
+    conn.close()
+
+    return render_template("leaderboard.html", leaders=leaders)
+
+@app.route("/ai_feedback/<filename>")
+def ai_feedback(filename):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+
+    if not os.path.exists(file_path):
+        return "File not found"
+
+    with open(file_path, "r", errors="ignore") as f:
+        content = f.read()
+
+    try:
+        response = groq_client.chat.completions.create(
+            model="openai/gpt-oss-20b",
+            messages=[
+                {"role": "system", "content": "You are an AI teacher reviewing student assignments."},
+                {"role": "user", "content": f"Review this assignment and give feedback:\n{content}"}
+            ],
+            max_tokens=500
+        )
+
+        feedback = response.choices[0].message.content
+
+    except Exception as e:
+        feedback = f"AI error: {str(e)}"
+
+    return render_template("ai_feedback.html", feedback=feedback)
+
 @app.route("/logout")
 def logout():
     session.clear()
@@ -329,4 +451,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

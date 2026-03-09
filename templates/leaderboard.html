@@ -1,0 +1,16 @@
+<h2>Leaderboard</h2>
+
+<table>
+<tr>
+<th>Student</th>
+<th>Submissions</th>
+</tr>
+
+{% for l in leaders %}
+<tr>
+<td>{{l[0]}}</td>
+<td>{{l[1]}}</td>
+</tr>
+{% endfor %}
+
+</table>
