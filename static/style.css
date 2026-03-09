@@ -1,0 +1,154 @@
+body{
+margin:0;
+font-family:Arial;
+background:#f4f6fb;
+}
+
+/* Layout */
+
+.layout{
+display:flex;
+}
+
+/* Sidebar */
+
+.sidebar{
+width:220px;
+height:100vh;
+background:#1e293b;
+color:white;
+padding:20px;
+position:fixed;
+}
+
+.sidebar a{
+display:block;
+color:white;
+padding:10px;
+margin-bottom:10px;
+text-decoration:none;
+border-radius:6px;
+}
+
+.sidebar a:hover{
+background:#334155;
+}
+
+.logo{
+margin-bottom:30px;
+}
+
+/* Main content */
+
+.main{
+margin-left:240px;
+width:100%;
+display:flex;
+justify-content:center;
+}
+
+.content{
+max-width:1000px;
+width:100%;
+padding:40px;
+}
+
+/* Titles */
+
+.page-title{
+text-align:center;
+margin-bottom:30px;
+}
+
+/* Cards */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+}
+
+.card, .course-card{
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 6px 20px rgba(0,0,0,0.08);
+transition:0.2s;
+}
+
+.card:hover, .course-card:hover{
+transform:translateY(-4px);
+}
+
+/* Buttons */
+
+.btn{
+display:inline-block;
+margin-top:10px;
+background:#2563eb;
+color:white;
+padding:8px 15px;
+border-radius:6px;
+text-decoration:none;
+}
+
+.btn:hover{
+background:#1d4ed8;
+}
+
+/* Login/Register */
+
+.auth-page{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+background:#eef2f7;
+}
+
+.auth-box{
+background:white;
+padding:40px;
+width:350px;
+border-radius:10px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.auth-box input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+.auth-box button{
+width:100%;
+padding:12px;
+background:#0f3d73;
+color:white;
+border:none;
+border-radius:8px;
+}
+
+.login-logo{
+width:180px;
+margin-bottom:20px;
+}
+.ai-chat{
+background:#f9fafb;
+border-radius:12px;
+}
+
+.ai-user{
+align-self:flex-end;
+background:#7c3aed;
+color:white;
+}
+
+.ai-bot{
+align-self:flex-start;
+background:#e5e7eb;
+color:#111;
+}

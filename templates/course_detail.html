@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-lg rounded-2xl p-6 mb-6">
+    <h1 class="text-2xl font-bold text-purple-600 mb-2">{{ course.title }}</h1>
+    <p class="text-gray-700">{{ course.description }}</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white shadow-lg rounded-2xl p-6">
+        <h2 class="text-xl font-semibold mb-3 text-indigo-600">Assignments</h2>
+        {% if assignments %}
+        <ul class="space-y-3">
+            {% for assignment in assignments %}
+            <li class="bg-indigo-50 p-4 rounded-xl shadow hover:shadow-md transition flex justify-between items-center">
+                <span class="font-semibold">{{ assignment.title }}</span>
+                <span class="text-gray-500 text-sm">Due: {{ assignment.due_date }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-gray-600">No assignments available.</p>
+        {% endif %}
+    </div>
+    <div class="bg-white shadow-lg rounded-2xl p-6">
+        <h2 class="text-xl font-semibold mb-3 text-indigo-600">Course Info</h2>
+        <p class="text-gray-700">Here you can put additional course details, resources, or announcements in a separate box for clarity.</p>
+    </div>
+</div>
+
+<div class="flex justify-center mt-6">
+    <a href="/dashboard" class="bg-purple-500 text-white px-6 py-3 rounded-xl hover:bg-purple-600 transition">⬅ Back to Dashboard</a>
+</div>
+{% endblock %}

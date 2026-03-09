@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+
+<h1 class="text-3xl font-bold text-purple-600 mb-6 text-center">Courses</h1>
+
+<div class="max-w-5xl mx-auto space-y-8">
+
+    <!-- Enrolled Courses -->
+    <div>
+        <h2 class="text-2xl font-semibold text-indigo-600 mb-4">Your Enrolled Courses</h2>
+        {% if enrolled %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for course in courses %}
+                {% if course[0] in enrolled %}
+                <div class="bg-white shadow-lg rounded-2xl p-4 flex flex-col justify-between">
+                    <h3 class="font-semibold text-lg">{{ course[1] }}</h3>
+                    <p class="text-gray-600 text-sm">{{ course[2] }}</p>
+                    <a href="/course/{{ course[0] }}" class="mt-2 bg-purple-500 text-white px-3 py-1 rounded-xl hover:bg-purple-600 text-center">Enter Course</a>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-600">You haven't enrolled in any courses yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Available Courses -->
+    <div>
+        <h2 class="text-2xl font-semibold text-indigo-600 mb-4">Available Courses</h2>
+        {% if courses %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for course in courses %}
+                {% if course[0] not in enrolled %}
+                <div class="bg-white shadow-lg rounded-2xl p-4 flex flex-col justify-between">
+                    <h3 class="font-semibold text-lg">{{ course[1] }}</h3>
+                    <p class="text-gray-600 text-sm">{{ course[2] }}</p>
+                    <a href="/enroll/{{ course[0] }}" class="mt-2 bg-green-500 text-white px-3 py-1 rounded-xl hover:bg-green-600 text-center">Enroll</a>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-600">No courses available. Add a new course below.</p>
+        {% endif %}
+    </div>
+
+    <!-- Add New Course -->
+    <div class="mt-8 bg-white shadow-lg rounded-2xl p-6">
+        <h2 class="text-2xl font-semibold text-indigo-600 mb-4">Add New Course</h2>
+        <form method="POST" action="/add_course" class="space-y-4">
+            <input type="text" name="course_name" placeholder="Course Name" required
+                   class="w-full border px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400">
+            <textarea name="course_desc" placeholder="Course Description" rows="3" required
+                      class="w-full border px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"></textarea>
+            <button type="submit" class="bg-purple-500 text-white px-4 py-2 rounded-xl hover:bg-purple-600 transition">Add Course</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

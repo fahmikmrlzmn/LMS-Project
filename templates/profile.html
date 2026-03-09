@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl">
+
+<h2 class="text-2xl font-bold text-purple-600 mb-4">My Profile</h2>
+
+<p><strong>Name:</strong> {{ user[0] }}</p>
+<p><strong>Email:</strong> {{ user[1] }}</p>
+
+<hr class="my-4">
+
+<h3 class="text-xl font-semibold mb-2">Enrolled Courses</h3>
+<ul class="list-disc ml-6">
+    {% for course in courses %}
+        <li>{{ course[0] }}</li>
+    {% else %}
+        <li>No courses enrolled yet.</li>
+    {% endfor %}
+</ul>
+
+<hr class="my-4">
+
+<h3 class="text-xl font-semibold mb-2">Submitted Assignments</h3>
+{% if submissions %}
+<table class="table-auto w-full border-collapse border border-gray-300">
+    <thead>
+        <tr class="bg-gray-100">
+            <th class="border px-2 py-1">Course</th>
+            <th class="border px-2 py-1">Filename</th>
+            <th class="border px-2 py-1">Submitted At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sub in submissions %}
+        <tr>
+            <td class="border px-2 py-1">{{ sub[0] }}</td>
+            <td class="border px-2 py-1">{{ sub[1] }}</td>
+            <td class="border px-2 py-1">{{ sub[2] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No submissions yet.</p>
+{% endif %}
+
+</div>
+
+{% endblock %}

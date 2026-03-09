@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+venv/
+.env
+
+# Venv (if named differently)
+.venv/
+
+# IDE
+.vscode/

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<h1 class="text-3xl font-bold text-purple-600 mb-6">Welcome, {{ fullname }}!</h1>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- My Courses Card -->
+    <div class="bg-white shadow-lg rounded-2xl p-6 flex flex-col">
+        <h3 class="text-xl font-semibold mb-3 text-indigo-600">My Courses</h3>
+        {% if courses %}
+        <ul class="space-y-3 flex-1">
+            {% for course in courses %}
+            <li class="bg-indigo-50 p-3 rounded-xl shadow hover:shadow-md transition">
+                <div class="flex justify-between items-center">
+                    <span class="font-semibold">{{ course[1] }}</span>
+                    <span class="text-gray-500 text-sm">{{ course_progress[course[0]] }}% completed</span>
+                </div>
+                <div class="bg-gray-200 h-2 w-full rounded-full mt-2">
+                    <div class="bg-purple-500 h-2 rounded-full" style="width: '{{ course_progress[course[0]] }}%'"></div>
+                </div>
+                <a href="/course/{{ course[0] }}" class="mt-2 inline-block text-purple-600 font-medium hover:underline">Enter Course</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No courses enrolled yet. Go to <a href="/courses" class="text-purple-600 hover:underline">Courses</a> to enroll!</p>
+        {% endif %}
+    </div>
+
+    <!-- Assignments Card -->
+    <div class="bg-white shadow-lg rounded-2xl p-6 flex flex-col justify-between">
+        <h3 class="text-xl font-semibold mb-3 text-indigo-600">Assignments</h3>
+        <p class="text-gray-700 flex-1">Submit and review your assignments on time to keep your progress up-to-date.</p>
+        <a href="/assignment" class="mt-4 bg-purple-500 text-white px-4 py-2 rounded-xl hover:bg-purple-600 transition text-center">Go to Assignments</a>
+    </div>
+
+    <!-- AI Study Assistant Card -->
+    <div class="bg-white shadow-lg rounded-2xl p-6 flex flex-col justify-between">
+        <h3 class="text-xl font-semibold mb-3 text-indigo-600">AI Study Assistant</h3>
+        <p class="text-gray-700 flex-1">Ask any academic question and get instant guidance from our AI-powered study assistant.</p>
+        <a href="/ai" class="mt-4 bg-purple-500 text-white px-4 py-2 rounded-xl hover:bg-purple-600 transition text-center">Open AI Assistant</a>
+    </div>
+
+</div>
+
+{% endblock %}
